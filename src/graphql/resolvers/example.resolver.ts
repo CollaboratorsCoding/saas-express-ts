@@ -4,14 +4,15 @@ const exampleResolver = {
   Query: {
     example: () => ({
       title: 'Example Title',
-      secretData: 'Example Secret Data'
-    }),
+      secretData: 'Example Secret Data',
+      secretDataAuth: 'Example Secret Data Auth'
+    })
     // Add other queries here
   },
   Mutation: {
-    exampleMutation: (_: any, { input }: any, ) => {
-      pubsub.publish('EXAMPLE_SUB', { exampleSubscription: 'from sub' })
-      return input.title
+    exampleMutation: (_: any, { input }: any) => {
+      pubsub.publish('EXAMPLE_SUB', { exampleSubscription: 'from sub' });
+      return input.title;
     }
     // Add other mutations here
   },
@@ -21,6 +22,6 @@ const exampleResolver = {
     }
     // Add other subscriptions here
   }
-}
+};
 
-export default exampleResolver
+export default exampleResolver;
