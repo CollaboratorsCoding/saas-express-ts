@@ -3,6 +3,7 @@ import { ApolloServerExpressConfig } from 'apollo-server-express';
 import resolvers from './resolvers';
 import typeDefs from './typeDefs';
 import schemaDirectives from './directives';
+import IContext from '../interfaces/context.interface';
 
 const schema: ApolloServerExpressConfig = {
   typeDefs,
@@ -14,7 +15,8 @@ const schema: ApolloServerExpressConfig = {
       return {};
     }
     // console.log(req.cookies.Authorization);
-    return { req };
+    const context: IContext = { req };
+    return context;
   },
   playground: true
 };
