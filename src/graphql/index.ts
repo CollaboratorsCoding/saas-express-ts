@@ -10,15 +10,13 @@ const schema: ApolloServerExpressConfig = {
   schemaDirectives,
   introspection: true,
   context: async ({ req, connection, payload }: any) => {
-
-
     if (connection) {
       return {};
     }
-    console.log(req.cookies.Authorization)
-    return {};
+    // console.log(req.cookies.Authorization);
+    return { req };
   },
   playground: true
 };
 
-export default schema
+export default schema;

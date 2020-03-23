@@ -4,16 +4,21 @@ import { authorized } from '../auth';
 const pubsub = new PubSub();
 const exampleResolver = {
   Query: {
-    example: authorized(() => ({
+    example: () => ({
       title: 'Example Title',
-      secretData: 'Example Secret Data'
-    })),
+      secretData: 'Example Secret Data',
+    }),
+
+    exampleAuth: authorized(() => ({
+      title: 'Example Title',
+      secretData: 'Example Secret Data',
+    }))
     // Add other queries here
   },
   Mutation: {
-    exampleMutation: (_: any, { input }: any, ) => {
-      pubsub.publish('EXAMPLE_SUB', { exampleSubscription: 'from sub' })
-      return input.title
+    exampleMutation: (_: any, { input }: any) => {
+      pubsub.publish('EXAMPLE_SUB', { exampleSubscription: 'from sub' });
+      return input.title;
     }
     // Add other mutations here
   },
@@ -23,6 +28,6 @@ const exampleResolver = {
     }
     // Add other subscriptions here
   }
-}
+};
 
-export default exampleResolver
+export default exampleResolver;

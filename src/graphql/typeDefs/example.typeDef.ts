@@ -1,23 +1,16 @@
 import { gql } from 'apollo-server-express';
 
-
 const exampleType = gql`
+  directive @authorized(requiredRole: Role = USER) on FIELD_DEFINITION
 
-directive @authorized(
-  requiredRole: Role = ADMIN,
-) on OBJECT | FIELD_DEFINITION
-
-enum Role {
-  ADMIN
-  REVIEWER
-  USER
-  UNKNOWN
-}
+  enum Role {
+    USER
+    GUEST
+  }
   type Example {
     title: String
-    secretData: String @authorized(requiredRole: ADMIN)
+    secretData: String @authorized(requiredRole: USER)
   }
- 
 
   input ExampleInput {
     title: String!
@@ -25,6 +18,7 @@ enum Role {
 
   extend type Query {
     example: Example!
+    exampleAuth: Example!
   }
 
   extend type Mutation {
@@ -34,7 +28,6 @@ enum Role {
   extend type Subscription {
     exampleSubscription: String!
   }
-`
+`;
 
-
-export default exampleType
+export default exampleType;
