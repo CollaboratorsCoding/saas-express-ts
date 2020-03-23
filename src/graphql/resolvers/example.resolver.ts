@@ -1,11 +1,13 @@
 import { PubSub } from 'apollo-server-express';
+import { authorized } from '../auth';
+
 const pubsub = new PubSub();
 const exampleResolver = {
   Query: {
-    example: () => ({
+    example: authorized(() => ({
       title: 'Example Title',
       secretData: 'Example Secret Data'
-    }),
+    })),
     // Add other queries here
   },
   Mutation: {

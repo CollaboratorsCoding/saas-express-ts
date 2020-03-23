@@ -8,6 +8,7 @@
     "lint": "tslint -p tsconfig.json -c tslint.json"
   },
   "dependencies": {
+    "agenda": "^3.0.0",
     "apollo-server-express": "^2.11.0",
     "bcrypt": "^4.0.1",
     "class-transformer": "^0.2.3",
@@ -30,6 +31,7 @@
     "typescript": "^3.8.3"
   },
   "devDependencies": {
+    "@types/agenda": "^2.0.6",
     "@types/bcrypt": "^3.0.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.6",
