@@ -11,10 +11,11 @@ const schema: ApolloServerExpressConfig = {
   introspection: true,
   context: async ({ req, connection, payload }: any) => {
 
-    console.log(req.cookies.Authorization)
+
     if (connection) {
       return {};
     }
+    console.log(req.cookies.Authorization)
     return {};
   },
   playground: true
