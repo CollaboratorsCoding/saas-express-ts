@@ -1,5 +1,6 @@
 import { SchemaDirectiveVisitor } from 'apollo-server-express';
 import AuthService from '../../services/auth.service';
+import IContext from '../../interfaces/context.interface';
 
 import {
   defaultFieldResolver,
@@ -15,7 +16,7 @@ class AuthorizedDirective extends SchemaDirectiveVisitor {
       if (!requiredRole) {
         return originalResolve.apply(this, args);
       }
-      const context = args[2];
+      const context: IContext = args[2];
       const { Authorization } = context.req.cookies;
 
       if (!Authorization) {
