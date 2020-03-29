@@ -29,7 +29,11 @@ class AuthController {
       next(error);
     }
   }
-
+  public me = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const userData: IUser = req.user;
+      res.status(200).json({ data: userData });
+   
+  }
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const userData: IUser = req.user;
 
