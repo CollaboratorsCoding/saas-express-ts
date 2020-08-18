@@ -1,20 +1,20 @@
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { CreateUserDto } from '../dtos/user.dto';
-import HttpException from '../exceptions/HttpException';
-import { DataStoredInToken, TokenData } from '../interfaces/auth.interface';
-import { IUser } from '../interfaces/user.interface';
-import userModel from '../models/user.model';
-import { isEmptyObject } from '../utils/util';
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
+import { CreateUserDto } from "../dtos/user.dto";
+import HttpException from "../exceptions/HttpException";
+import { DataStoredInToken, TokenData } from "../interfaces/auth.interface";
+import { UserDoc } from "../interfaces/user.interface";
+import { User } from "../models/user.model";
+import { isEmptyObject } from "../utils/util";
 
 class AuthService {
-  public users = userModel;
+  public users = User;
 
-  public async signup(userData: CreateUserDto): Promise<IUser> {
+  public async signup(userData: CreateUserDto): Promise<UserDoc> {
     if (isEmptyObject(userData))
       throw new HttpException(400, "You're not userData");
 
-    const findUser: IUser = await this.users.findOne({ email: userData.email });
+    const findUser = await this.users.findOne({ email: userData.email });
     if (findUser)
       throw new HttpException(
         409,
@@ -22,9 +22,9 @@ class AuthService {
       );
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const createUserData: IUser = await this.users.create({
+    const createUserData = await this.users.build({
       ...userData,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     return createUserData;
@@ -32,11 +32,11 @@ class AuthService {
 
   public async login(
     userData: CreateUserDto
-  ): Promise<{ cookie: string; findUser: IUser }> {
+  ): Promise<{ cookie: string; findUser: UserDoc }> {
     if (isEmptyObject(userData))
       throw new HttpException(400, "You're not userData");
 
-    const findUser: IUser = await this.users.findOne({ email: userData.email });
+    const findUser = await this.users.findOne({ email: userData.email });
     if (!findUser)
       throw new HttpException(409, `Your email ${userData.email} not found`);
 
@@ -45,7 +45,7 @@ class AuthService {
       findUser.password
     );
     if (!isPasswordMatching)
-      throw new HttpException(409, 'Your password not matching');
+      throw new HttpException(409, "Your password not matching");
 
     const tokenData = this.createToken(findUser);
     const cookie = this.createCookie(tokenData);
@@ -53,26 +53,26 @@ class AuthService {
     return { cookie, findUser };
   }
 
-  public async logout(userData: IUser): Promise<IUser> {
+  public async logout(userData: UserDoc): Promise<UserDoc> {
     if (isEmptyObject(userData))
       throw new HttpException(400, "You're not userData");
 
-    const findUser: IUser = await this.users.findOne({
-      password: userData.password
+    const findUser = await this.users.findOne({
+      password: userData.password,
     });
     if (!findUser) throw new HttpException(409, "You're not user");
 
     return findUser;
   }
 
-  public createToken(user: IUser): TokenData {
+  public createToken(user: UserDoc): TokenData {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
     const secret: string = process.env.JWT_SECRET;
     const expiresIn: number = 60 * 60;
 
     return {
       expiresIn,
-      token: jwt.sign(dataStoredInToken, secret, { expiresIn })
+      token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
     };
   }
 
@@ -80,11 +80,11 @@ class AuthService {
     return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}; Path=/; Domain=localhost`;
   }
 
-  public static async checkToken(token: string): Promise<IUser> {
+  public static async checkToken(token: string): Promise<UserDoc> {
     const secret = process.env.JWT_SECRET;
     const verificationResponse = jwt.verify(token, secret) as DataStoredInToken;
     const userId = verificationResponse._id;
-    const findUser = await userModel.findById(userId);
+    const findUser = await User.findById(userId);
     return findUser;
   }
 }

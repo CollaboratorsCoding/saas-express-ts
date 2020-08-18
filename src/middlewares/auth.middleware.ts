@@ -1,11 +1,11 @@
-import { NextFunction, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
-import HttpException from '../exceptions/HttpException';
+import { NextFunction, Response } from "express";
+import * as jwt from "jsonwebtoken";
+import HttpException from "../exceptions/HttpException";
 import {
   DataStoredInToken,
-  RequestWithUser
-} from '../interfaces/auth.interface';
-import userModel from '../models/user.model';
+  RequestWithUser,
+} from "../interfaces/auth.interface";
+import { User } from "../models/user.model";
 
 async function authMiddleware(
   req: RequestWithUser,
@@ -21,19 +21,19 @@ async function authMiddleware(
         secret
       ) as DataStoredInToken;
       const userId = verificationResponse._id;
-      const findUser = await userModel.findById(userId);
+      const findUser = await User.findById(userId);
 
       if (findUser) {
         req.user = findUser;
         next();
       } else {
-        next(new HttpException(401, 'Wrong auth token'));
+        next(new HttpException(401, "Wrong auth token"));
       }
     } catch (error) {
-      next(new HttpException(401, 'Wrong authentication token'));
+      next(new HttpException(401, "Wrong authentication token"));
     }
   } else {
-    next(new HttpException(401, 'Wrong authentication token'));
+    next(new HttpException(401, "Wrong authentication token"));
   }
 }
 
