@@ -22,10 +22,12 @@ class AuthService {
       );
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const createUserData = await this.users.build({
-      ...userData,
-      password: hashedPassword,
-    });
+    const createUserData = await this.users
+      .build({
+        ...userData,
+        password: hashedPassword,
+      })
+      .save();
 
     return createUserData;
   }
